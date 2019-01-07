@@ -61,7 +61,7 @@ class Calculation(object):
         self._resolution = resolution
         self.endshape = (resolution, resolution)
 
-    def getData(self, redshiftindex):
+    def getData(self, redshiftindex, normalized=True):
         FValuenew = PropagateDatawithList(
             k=self.k,
             FValue=self.FValue,
@@ -81,17 +81,17 @@ class Calculation(object):
             real = real.ravel()
 
             minimum, maximum = real.min(), real.max()
-            Valuenew[quantity] = normalize(real)
+            Valuenew[quantity] = normalize(real) if normalized else real
 
         return Valuenew, FValuenew, (minimum, maximum)
 
 
-    def getInitialData(self):
+    def getInitialData(self, normalized=True):
         # for odd values of self._resolution, this is necessary
         Value = cv2.resize(realInverseFourier(self.FValue), self.endshape)
 
         minimum, maximum = Value.min(), Value.max()
-        Value = normalize(Value)
+        Value = normalize(Value) if normalized else Value
 
         assert Value.size == self.resolution ** 2
 
@@ -170,18 +170,19 @@ class Calculation(object):
                              sigma=2,
                              initialDataType="SI",
                              SIlimit=None,
-                             SI_ns=0.96):
+                             SI_ns=0.96, seed=None):
         logging.info("Generating Initial Condition")
 
         if initialDataType == "Gaussian":
             self.ValueE, self.FValue, self.k, self.kxE, self.kyE = GenerateGaussianData(
-                sigma, self.size, self.resolution)
+                sigma, self.size, self.resolution, seed=seed)
         elif initialDataType == "SI":
             self.ValueE, self.FValue, self.k, self.kxE, self.kyE = GenerateSIData(
                 A,
                 self.size,
                 self.resolution,
                 limit=SIlimit,
-                ns=SI_ns)
+                ns=SI_ns,
+                seed=seed)
         else:
             logging.warn("initialDataType " + str(initialDataType) + " not found")
