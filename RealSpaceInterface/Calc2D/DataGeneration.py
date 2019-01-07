@@ -5,7 +5,9 @@ import cv2
 
 from Calc2D.rFourier import realFourier, realInverseFourier
 
-def GenerateGaussianData(sigma, size, points, A=1):
+def GenerateGaussianData(sigma, size, points, A=1, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
     xr = np.linspace(-size / 2.0, size / 2.0, points)
     yr = np.linspace(-size / 2.0, size / 2.0, points)
     step = xr[1] - xr[0]
@@ -29,7 +31,9 @@ def GenerateGaussianData(sigma, size, points, A=1):
 
     return ValueE, FValue, k, kx, ky
 
-def GenerateSIData(A, size, points, limit=None, ns=0.96):
+def GenerateSIData(A, size, points, limit=None, ns=0.96, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
     xr = np.linspace(-size / 2.0, size / 2.0, points)
     yr = np.linspace(-size / 2.0, size / 2.0, points)
     step = xr[1] - xr[0]
