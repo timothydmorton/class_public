@@ -6,6 +6,8 @@ def PropagateDatawithListOld(k,FValue,zredindex,transferFunctionlist):
 def PropagateDatawithList(k, FValue, zredindex, transferFunctionlist):
     result = {}
     for field, transfer_function in transferFunctionlist.items():
+        if not transfer_function:
+            continue
         result[field] = (transfer_function[zredindex](k.ravel()) * FValue.ravel()).reshape(FValue.shape)
     return result
 

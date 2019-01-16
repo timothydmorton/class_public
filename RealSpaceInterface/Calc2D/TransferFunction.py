@@ -31,7 +31,7 @@ def ComputeTransferData(settings, redshift):
             transfer_function_dict["d_g/4 + psi"] = transfer_function_dict["d_g"]/4 + transfer_function_dict["psi"]
         # Now filter the relevant fields
         fields = TRANSFER_QUANTITIES + ["k (h/Mpc)"]
-        outputData = [{field: outputData[i][field] for field in fields} for i in range(len(redshift))]
+        outputData = [{field: outputData[i][field] for field in fields if field in outputData[i]} for i in range(len(redshift))]
 
         database[database_key] = outputData
         return outputData, redshift
@@ -56,6 +56,8 @@ def ComputeTransferFunctionList(cosmologicalParameters, redshift, kperdecade=200
         k_data = data_dict[0]["k (h/Mpc)"] * cosmologicalParameters["h"]  #in order to get k [1/Mpc]
         k_data_zero = np.concatenate(([0.0], k_data))
         for field in TRANSFER_QUANTITIES:
+            if field not in data_dict[i]:
+                continue
             data = data_dict[i][field] / data_dict[i][field][0]
             data_zero = np.concatenate(([1.0], data))
             interpolated_func = InterpolatedUnivariateSpline(k_data_zero, data_zero)

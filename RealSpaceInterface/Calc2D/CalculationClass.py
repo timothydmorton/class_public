@@ -108,7 +108,8 @@ class Calculation(object):
         self.cosmologicalParameters = cosmologicalParameters
 
         # Calculate transfer functions
-        self.TransferFunctionList = ComputeTransferFunctionList(self.cosmologicalParameters, self.redshift)
+        self.TransferFunctionList = ComputeTransferFunctionList(self.cosmologicalParameters, self.redshift,
+                                                                P_k_max=self.P_k_max)
         # Calculate Cl's
         self.tCl, self.mPk = self.calculate_spectra(self.cosmologicalParameters)
 
